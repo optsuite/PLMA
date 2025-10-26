@@ -1,15 +1,15 @@
 # PLMA
-PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathcal{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\\{1,\dots,n\\}`$. The QAP can be then formulated as 
-$$\min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
+PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathscr{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\\{1,\dots,n\\}$. The QAP can be then formulated as 
+$$\min_{\pi\in\Pi_n}\quad f(\pi;\mathscr{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
 
 ## Algorithm
-PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem
+PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathscr{P})$ for each instance $\mathscr{P}$, through which the original optimization problem is transformed into a learning problem
 
-$$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):= \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}[f(\mathcal{T}(\pi);\mathcal{P})].$$
+$$\min_{\theta\in\mathbb{R}^d}\quad \mathscr{L}(\theta):= \mathbb{E}_{\mathscr{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathscr{P})}[f(\mathscr{T}(\pi);\mathscr{P})].$$
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
 
-The probabilistic model utlized in PLMA is an energy-based model $\displaystyle p_{\theta}(\pi\mid\mathcal{P})=\frac{\exp(\Phi_{\theta}(\pi))}{Z_{\theta}}$ tailored for MCMC sampling. Specifically, the score function has an additive structure $\Phi_{\theta}(\pi) = \sum_{i=1}^n\phi_{i,\pi(i)}(\theta,\mathcal{P})$, where $\phi(\theta,\mathcal{P})=(\phi_{i,j}(\theta,\mathcal{P}))\in\mathbb{R}^{n\times n}$ is the heatmap output by the neural network. This structure enables $O(1)$-time evaluation of 2-swap proposals within a Metropolis-Hastings sampler. 
+The probabilistic model utlized in PLMA is an energy-based model $\displaystyle p_{\theta}(\pi\mid\mathscr{P})=\frac{\exp(\Phi_{\theta}(\pi))}{Z_{\theta}}$ tailored for MCMC sampling. Specifically, the score function has an additive structure $\Phi_{\theta}(\pi) = \sum_{i=1}^n\phi_{i,\pi(i)}(\theta,\mathscr{P})$, where $\phi(\theta,\mathscr{P})=(\phi_{i,j}(\theta,\mathscr{P}))\in\mathbb{R}^{n\times n}$ is the heatmap output by the neural network. This structure enables $O(1)$-time evaluation of 2-swap proposals within a Metropolis-Hastings sampler. 
 
 ## Installation
 The computational bottleneck of the PLMA framework, namely the parallelized execution of MCMC sampling and 2-swap local search, is addressed by high-performance implementations in CUDA C++. **Therefore, an NVIDIA GPU with a properly configured CUDA toolkit is a mandatory prerequisite for compilation and execution.**
