@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Python caches and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+pip-wheel-metadata/
+
+# Virtual environments
+env/
+venv/
+.venv/
+venv.bak/
+.env
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+eggs/
+
+# Compiled extensions and object files (e.g., CUDA/PyBind builds)
+*.so
+*.dylib
+*.o
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Jupyter
+.ipynb_checkpoints/

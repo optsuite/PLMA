@@ -1,10 +1,10 @@
 # PLMA
 PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathcal{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\{1,\dots,n\}$. The QAP can be then formulated as 
-$$ \min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
+$$\min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
 
 ## Algorithm
 PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem  
-$$\min_{\theta\in\R^d}\quad \mathcal{L}(\theta):=\mathbb E_{\mathcal{P} \sim\Gamma} \mathbb{E}_{\sigma\sim \mathcal{T}_{\sharp}p_{\theta}(\cdot\mid \mathcal{P})}\left[f(\sigma;\mathcal{P})\right] = \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}\left[f(\mathcal{T}(\pi);\mathcal{P})\right].$$
+$$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):=\mathbb E_{\mathcal{P} \sim\Gamma} \mathbb{E}_{\sigma\sim \mathcal{T}_{\sharp}p_{\theta}(\cdot\mid \mathcal{P})}\left[f(\sigma;\mathcal{P})\right] = \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}\left[f(\mathcal{T}(\pi);\mathcal{P})\right].$$
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
 
@@ -108,13 +108,13 @@ The following table presents the average performance of different algorithms on 
 
 #### Taixxeyy instances
 The next table presents the average results of different algorithms on the Taixxeyy instance group, with all metrics being the mean values over 10 independent runs. For each class, the reported average and the [min, max] gaps are the averages of the per-instance statistics.
-| **Class** | **Ro-TS** | | | **IPFP** | | | **PLMA** | | |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| | **mean** | **[min, max]** | **Time** | **mean** | **[min, max]** | **Time** | **mean** | **[min, max]** | **Time** |
-| tai27e | 41.50\% | [0.11\%, 221.08\%] | 0.57 | 19.47\% | [6.14\%, 34.11\%] | 0.38 | **0.00\%** | [0.00\%, 0.00\%] | 0.08 |
-| tai45e | 101.89\% | [1.00\%, 400.60\%] | 3.83 | 22.01\% | [8.26\%, 36.98\%] | 1.03 | **0.03\%** | [0.00\%, 0.35\%] | 0.28 |
-| tai75e | 111.28\% | [6.20\%, 280.01\%] | 18.49 | 27.64\% | [17.56\%, 36.78\%] | 2.52 | **0.09\%** | [0.00\%, 0.45\%] | 1.48 |
-| tai125e | 82.53\% | [7.65\%, 265.54\%] | 72.52 | 26.93\% | [20.64\%, 32.67\%] | 8.52 | **2.67\%** | [-0.08\%, 5.62\%] | 8.18 |
-| tai175e | 67.86\% | [9.11\%, 260.98\%] | 158.18 | 23.32\% | [17.70\%, 28.11\%] | 16.86 | **9.11\%** | [5.61\%, 12.04\%] | 14.63 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Average** | 81.01\% | [4.82\%, 285.64\%] | 50.72 | 23.87\% | [14.06\%, 33.73\%] | 5.86 | **2.38\%** | [1.11\%, 3.69\%] | 4.93 |
+| |  |**Ro-TS** | |  | **PLMA**| |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Class** | **mean** | **[min, max]** | **Time** | **mean** | **[min, max]** | **Time** |
+| tai27e | 41.50\% | [0.11\%, 221.08\%] | 0.57 | **0.00\%** | [0.00\%, 0.00\%] | 0.08 |
+| tai45e | 101.89\% | [1.00\%, 400.60\%] | 3.83 | **0.03\%** | [0.00\%, 0.35\%] | 0.28 |
+| tai75e | 111.28\% | [6.20\%, 280.01\%] | 18.49 | **0.09\%** | [0.00\%, 0.45\%] | 1.48 |
+| tai125e | 82.53\% | [7.65\%, 265.54\%] | 72.52 | **2.67\%** | [-0.08\%, 5.62\%] | 8.18 |
+| tai175e | 67.86\% | [9.11\%, 260.98\%] | 158.18 | **9.11\%** | [5.61\%, 12.04\%] | 14.63 |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Average** | 81.01\% | [4.82\%, 285.64\%] | 50.72 | **2.38\%** | [1.11\%, 3.69\%] | 4.93 |
