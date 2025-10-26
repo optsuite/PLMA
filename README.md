@@ -8,7 +8,7 @@ $$\min_{\theta\in\R^d}\quad \mathcal{L}(\theta):=\mathbb E_{\mathcal{P} \sim\Gam
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
 
-The probabilistic model utlized in PLMA is an energy-based model $\displaystyle p_{\theta}(\pi\mid\mathcal{P})=\frac{\exp(\Phi_{\theta})}{Z_{\theta}}$ tailored for MCMC sampling. Specifically, the score function has an additive structure $\Phi_{\theta}(\pi) = \sum_{i=1}^n\phi_{i,\pi(i)}(\theta,\mathcal{P})$, where $\phi(\theta,\mathcal{P})=(\phi_{i,j}(\theta,\mathcal{P}))\in\mathbb{R}^{n\times n}$ is the heatmap output by the neural network. This structure enables $O(1)$-time evaluation of 2-swap proposals within a Metropolis-Hastings sampler. 
+The probabilistic model utlized in PLMA is an energy-based model $\displaystyle p_{\theta}(\pi\mid\mathcal{P})=\frac{\exp(\Phi_{\theta}(\pi))}{Z_{\theta}}$ tailored for MCMC sampling. Specifically, the score function has an additive structure $\Phi_{\theta}(\pi) = \sum_{i=1}^n\phi_{i,\pi(i)}(\theta,\mathcal{P})$, where $\phi(\theta,\mathcal{P})=(\phi_{i,j}(\theta,\mathcal{P}))\in\mathbb{R}^{n\times n}$ is the heatmap output by the neural network. This structure enables $O(1)$-time evaluation of 2-swap proposals within a Metropolis-Hastings sampler. 
 
 ## Installation
 The computational bottleneck of the PLMA framework, namely the parallelized execution of MCMC sampling and 2-swap local search, is addressed by high-performance implementations in CUDA C++. **Therefore, an NVIDIA GPU with a properly configured CUDA toolkit is a mandatory prerequisite for compilation and execution.**
@@ -47,47 +47,47 @@ In our paper, we have evaluated PLMA on two families of synthetic QAP instances,
 ### Results
 #### Geometrically Structured Dataset
 
-| **Algorithm** | **QAP20** | | | **QAP50** | | | **QAP100** | | |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| | **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** |
-| Ro-TS (1k) | 54.38 | 0.01% | 17.04s | 375.99 | 0.14% | 4m35s | 1593.27 | 0.13% | 38m56s |
-| Ro-TS (5k) | **54.37** | **0.00%** | 1m25s | **375.48** | **0.00%** | 22m53s | 1591.25 | 0.00% | 3h15m |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| IPFP | 55.11 | 1.37% | 2.04s | 378.76 | 0.88% | 11.47s | 1600.27 | 0.57% | 1m34s |
-| IPFP (10) | 54.54 | 0.31% | 20.97s | 376.60 | 0.30% | 2m30s | 1594.76 | 0.22\% | 17m34s |
-| RRWM | 71.30 | 31.09% | 11.30s | 428.78 | 14.14% | 39.23s | 1700.33 | 6.86% | 6m32s |
-| SM | 64.38 | 18.45% | 0.22s | 426.92 | 13.70\% | 7.14s | 1753.10 | 10.17\% | 1m40s |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| NGM | 62.93 | 15.87\% | 24.78s | 429.69 | 14.46\% | 1m16s | 1773.71 | 11.47\% | 2m29s |
-| SAWT (10k) | 54.72 | 0.64\% | 3m41s | 380.92 | 1.45\% | 5m36s | 1617.30 | 1.64\% | 10m43s |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **PLMA ($\boldsymbol{T=1}$)** | 54.63 | 0.48\% | 0.06s | 379.79 | 1.15\% | 0.41s | 1607.84 | 1.04\% | 4.27s |
-| **PLMA ($\boldsymbol{T=50}$)** | **54.37** | **0.00\%** | 2.57s | 375.55 | 0.20\% | 19.88s | 1591.73 | 0.03\% | 3m30s |
-| **PLMA ($\boldsymbol{T=200}$)** | **54.37** | **0.00\%** | 9.36s | **375.48** | **0.00\%** | 1m19s | **1591.23** | **0.00\%** | 13m58s |
+|  |  | $n=50$| |  | $n=100$ | |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Algorithm**| **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** |
+| Ro-TS (1k) | 375.99 | 0.14% | 4m35s | 1593.27 | 0.13% | 38m56s |
+| Ro-TS (5k) | **375.48** | **0.00%** | 22m53s | 1591.25 | 0.00% | 3h15m |
+| --- | --- | --- | --- | --- | --- | --- |
+| IPFP | 378.76 | 0.88% | 11.47s | 1600.27 | 0.57% | 1m34s |
+| IPFP (10) | 376.60 | 0.30% | 2m30s | 1594.76 | 0.22\% | 17m34s |
+| RRWM | 428.78 | 14.14% | 39.23s | 1700.33 | 6.86% | 6m32s |
+| SM | 426.92 | 13.70\% | 7.14s | 1753.10 | 10.17\% | 1m40s |
+| --- | --- | --- | --- | --- | --- | --- |
+| NGM | 429.69 | 14.46\% | 1m16s | 1773.71 | 11.47\% | 2m29s |
+| SAWT (10k) | 380.92 | 1.45\% | 5m36s | 1617.30 | 1.64\% | 10m43s |
+| --- | --- | --- | --- | --- | --- | --- |
+| **PLMA ($\boldsymbol{T=1}$)** | 379.79 | 1.15\% | 0.41s | 1607.84 | 1.04\% | 4.27s |
+| **PLMA ($\boldsymbol{T=50}$)** | 375.55 | 0.20\% | 19.88s | 1591.73 | 0.03\% | 3m30s |
+| **PLMA ($\boldsymbol{T=200}$)** | **375.48** | **0.00\%** | 1m19s | **1591.23** | **0.00\%** | 13m58s |
 
 #### Uniformly Random Dataset
-| **Algorithm** | **QAP20** | | | **QAP50** | | | **QAP100** | | |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| | **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** |
-| Ro-TS (1k) | 76.61 | 0.07\% | 17.56s | 523.08 | 0.22\% | 4m36s | 2195.98 | 0.13\% | 38m59s |
-| Ro-TS (5k) | **76.56** | **0.00\%** | 1m27s | 521.91 | 0.00\% | 22m59s | 2193.16 | 0.00\% | 3h15m |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| IPFP | 79.13 | 3.39\% | 2.12s | 530.74 | 1.69\% | 7.45s | 2211.38 | 0.83\% | 41.95s |
-| IPFP (25) | 77.60 | 1.37\% | 54.70s | 526.96 | 0.97\% | 4m20s | 2203.29 | 0.46\% | 19m20s |
-| RRWM | 93.50 | 22.27\% | 11.11s | 592.50 | 13.54\% | 31.91s | 2432.34 | 10.91\% | 5m6s |
-| SM | 92.32 | 20.73\% | 0.19s | 605.08 | 15.95\% | 5.65s | 2457.47 | 12.05\% | 1m23s |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| NGM | 88.34 | 15.49\% | 25.08s | 594.99 | 14.01\% | 1m17s | 2438.52 | 11.19\% | 2m29s |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **PLMA ($\boldsymbol{T=1}$)** | 78.23 | 2.20\% | 0.06s | 538.42 | 3.17\% | 0.40s | 2243.43 | 2.29\% | 4.32s |
-| **PLMA ($\boldsymbol{T=50}$)** | 76.59 | 0.05\% | 2.47s | 523.95 | 0.40\% | 19.51s | 2200.40 | 0.34\% | 3m30s |
-| **PLMA ($\boldsymbol{T=200}$)** | **76.56** | **0.00\%** | 9.60s | **521.83** | **-0.01\%** | 1m18s | **2193.13** | **0.00\%** | 14m1s |
+|  |  | $n=50$| |  | $n=100$ | |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Algorithm**| **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** |
+| Ro-TS (1k) | 523.08 | 0.22\% | 4m36s | 2195.98 | 0.13\% | 38m59s |
+| Ro-TS (5k) | 521.91 | 0.00\% | 22m59s | 2193.16 | 0.00\% | 3h15m |
+| --- | --- | --- | --- | --- | --- | --- |
+| IPFP | 530.74 | 1.69\% | 7.45s | 2211.38 | 0.83\% | 41.95s |
+| IPFP (25) | 526.96 | 0.97\% | 4m20s | 2203.29 | 0.46\% | 19m20s |
+| RRWM | 592.50 | 13.54\% | 31.91s | 2432.34 | 10.91\% | 5m6s |
+| SM | 605.08 | 15.95\% | 5.65s | 2457.47 | 12.05\% | 1m23s |
+| --- | --- | --- | --- | --- | --- | --- |
+| NGM | 594.99 | 14.01\% | 1m17s | 2438.52 | 11.19\% | 2m29s |
+| --- | --- | --- | --- | --- | --- | --- |
+| **PLMA ($\boldsymbol{T=1}$)** | 538.42 | 3.17\% | 0.40s | 2243.43 | 2.29\% | 4.32s |
+| **PLMA ($\boldsymbol{T=50}$)** | 523.95 | 0.40\% | 19.51s | 2200.40 | 0.34\% | 3m30s |
+| **PLMA ($\boldsymbol{T=200}$)** | **521.83** | **-0.01\%** | 1m18s | **2193.13** | **0.00\%** | 14m1s |
 
 #### QAPLIB Benchmark
 The following table presents the average performance of different algorithms on the QAPLIB dataset, categorized by instance class. The metrics reported include the average optimality Gap and the computation Time (in seconds).
-| **Instance Class** | **Ro-TS** | | **SAWT** | | **IPFP** | | **PLMA** | |
+|  | **Ro-TS** | | **SAWT** | | **IPFP** | | **PLMA** | |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** |
+|**Class** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** |
 | bur (26) | **0.00\%** | 0.12 | 3.95\% | 14.67 | 0.05\% | 0.33 | **0.00\%** | 0.07 |
 | chr (12-25) | 0.48\% | 0.16 | 147.54\% | 14.18 | 14.90\% | 0.26 | **0.20\%** | 0.94 |
 | els (19) | **0.00\%** | 0.02 | 47.37\% | 14.24 | 10.18\% | 0.36 | **0.00\%** | 0.08 |
