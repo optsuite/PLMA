@@ -1,9 +1,10 @@
 # PLMA
-PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathcal{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\{1,\dots,n\}$. The QAP can be then formulated as 
+PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathcal{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\\{1,\dots,n\\}`$. The QAP can be then formulated as 
 $$\min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
 
 ## Algorithm
-PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem  
+PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem
+
 $$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):= \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}[f(\mathcal{T}(\pi);\mathcal{P})].$$
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
