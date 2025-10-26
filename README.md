@@ -4,7 +4,7 @@ $$\min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)
 
 ## Algorithm
 PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem  
-$$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):=\mathbb E_{\mathcal{P} \sim\Gamma} \mathbb{E}_{\sigma\sim \mathcal{T}_{\sharp}p_{\theta}(\cdot\mid \mathcal{P})}\left[f(\sigma;\mathcal{P})\right] = \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}\left[f(\mathcal{T}(\pi);\mathcal{P})\right].$$
+$$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):=\mathbb E_{\mathcal{P} \sim\Gamma} \mathbb{E}_{\sigma\sim \mathcal{T}_{\sharp}p_{\theta}(\cdot\mid \mathcal{P})}[f(\sigma;\mathcal{P})] = \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}[f(\mathcal{T}(\pi);\mathcal{P})].$$
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
 
@@ -108,13 +108,13 @@ The following table presents the average performance of different algorithms on 
 
 #### Taixxeyy instances
 The next table presents the average results of different algorithms on the Taixxeyy instance group, with all metrics being the mean values over 10 independent runs. For each class, the reported average and the [min, max] gaps are the averages of the per-instance statistics.
-| |  |**Ro-TS** | |  | **PLMA**| |
+| | |**Ro-TS** | | | **PLMA**| |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Class** | **mean** | **[min, max]** | **Time** | **mean** | **[min, max]** | **Time** |
-| tai27e | 41.50\% | [0.11\%, 221.08\%] | 0.57 | **0.00\%** | [0.00\%, 0.00\%] | 0.08 |
-| tai45e | 101.89\% | [1.00\%, 400.60\%] | 3.83 | **0.03\%** | [0.00\%, 0.35\%] | 0.28 |
-| tai75e | 111.28\% | [6.20\%, 280.01\%] | 18.49 | **0.09\%** | [0.00\%, 0.45\%] | 1.48 |
-| tai125e | 82.53\% | [7.65\%, 265.54\%] | 72.52 | **2.67\%** | [-0.08\%, 5.62\%] | 8.18 |
-| tai175e | 67.86\% | [9.11\%, 260.98\%] | 158.18 | **9.11\%** | [5.61\%, 12.04\%] | 14.63 |
+| **Class** | **[min, max]** | **mean** | **Time** | **[min, max]** | **mean** | **Time** |
+| tai27e | [0.11\%, 221.08\%] | 41.50\% | 0.57 | [0.00\%, 0.00\%] | **0.00\%** | 0.08 |
+| tai45e | [1.00\%, 400.60\%] | 101.89\% | 3.83 | [0.00\%, 0.35\%] | **0.03\%** | 0.28 |
+| tai75e | [6.20\%, 280.01\%] | 111.28\% | 18.49 | [0.00\%, 0.45\%] | **0.09\%** | 1.48 |
+| tai125e | [7.65\%, 265.54\%] | 82.53\% | 72.52 | [-0.08\%, 5.62\%] | **2.67\%** | 8.18 |
+| tai175e | [9.11\%, 260.98\%] | 67.86\% | 158.18 | [5.61\%, 12.04\%] | **9.11\%** | 14.63 |
 | --- | --- | --- | --- | --- | --- | --- |
-| **Average** | 81.01\% | [4.82\%, 285.64\%] | 50.72 | **2.38\%** | [1.11\%, 3.69\%] | 4.93 |
+| **Average** | [4.82\%, 285.64\%] | 81.01\% | 50.72 | [1.11\%, 3.69\%] | **2.38\%** | 4.93 |
