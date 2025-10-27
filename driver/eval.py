@@ -14,7 +14,7 @@ from src.utils.utils import seed_everything
 
 def load_synthetic(F_root, D_root, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
     """
-    一个生成器函数，用于加载'synthetic'数据集。
+    Load synthetic QAP data from .npy files.
     """
     F_all = np.load(F_root).astype(np.float32)
     D_all = np.load(D_root).astype(np.float32)
@@ -67,15 +67,12 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint", type=str, default=None, help='Path to the model checkpoint')
     parser.add_argument("--save_path", type=str, default=None, help='Path to save the results')
     parser.add_argument('--verbose', type=bool, default=True, help='Whether to print progress information')
-    parser.add_argument('--dataset', type=str, default='uniform', help='Dataset: synthetic or uniform')
+    parser.add_argument('--dataset', type=str, default='uniform', choices=['uniform', 'sawt'], help='Dataset to use')
 
     args = parser.parse_args()
     n = args.n
 
-    if args.dataset == 'synthetic':
-        D_root = f"../data/synthetic/{n}_D_test.npy"
-        F_root = f"../data/synthetic/{n}_F_test.npy"
-    elif args.dataset == 'uniform':
+    if args.dataset == 'uniform':
         D_root = f"../data/uniform/uniform_{n}_D.npy"
         F_root = f"../data/uniform/uniform_{n}_F.npy"
     elif args.dataset == 'sawt':

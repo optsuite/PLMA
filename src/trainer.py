@@ -97,10 +97,9 @@ class Trainer:
                 meters[k].update(v, batch_size)
 
         return {k: meter.avg for k, meter in meters.items()}
-
+    
     def train_one_batch(self, batch):
         D_batch, F_batch = batch[0], batch[1]
-
         heatmap = self.model(D_batch, F_batch)
         
         # Get start states, run MCMC and local search
@@ -117,12 +116,11 @@ class Trainer:
         entropy = - torch.sum(heatmap * torch.exp(heatmap), dim=(1,2)).mean()     # Here heatmap is in the log space
         loss = rl_loss - entropy * self.plma_configs["entropy_weight"]
 
-
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
 
-        return {"initial_cost": initial_costs.mean().item(),  "improved_cost": improved_costs.mean().item(), "loss": loss.item(), "entropy": entropy.item()}
+        return {"initial_cost": initial_costs.amin(-1).mean().item(),  "improved_cost": improved_costs.amin(-1).mean().item(), "loss": loss.item(), "entropy": entropy.item()}
 
     def _log_epoch_stats(self, epoch, metrics):
         """Log epoch statistics with labeled metrics."""

@@ -38,12 +38,8 @@ def driver(dataset, output_dir, repetitions=10, model_params=None, checkpoint=No
 
     if dataset == "qaplib":
         data_loader = load_qaplib(directory="../data/QAPLIB_opt")
-    elif dataset == "qaplib_test":
-        data_loader = load_qaplib(directory="../data/QAPLIB_test")
     elif dataset == "tai":
         data_loader = load_tai(data_root="../data/tai_data")
-    elif dataset == "tai_test":
-        data_loader = load_tai(data_root="../data/tai_test")
 
     for problem_name, (n, opt, A, B) in data_loader:
         print(f"Processing Instance: {problem_name} (n={n}, opt={opt})")
@@ -83,10 +79,11 @@ def driver(dataset, output_dir, repetitions=10, model_params=None, checkpoint=No
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', type=str, default='tai_test', choices=['qaplib', 'qaplib_test', 'tai', 'tai_test'], help='Dataset to use')
+    parser.add_argument('--dataset', type=str, default='qaplib', choices=['qaplib', 'tai'], help='Dataset to use')
     parser.add_argument('--output_dir', type=str, default='./results', help='Directory to save results')
     parser.add_argument('--repetitions', '-r', type=int, default=10, help='Number of repetitions per instance')
-    
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
+
     parser.add_argument("--init_dim", type=int, default=16)
     parser.add_argument("--embed_dim", type=int, default=256)
     parser.add_argument("--num_heads", type=int, default=8)
@@ -96,7 +93,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_iterations", type=int, default=1)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--checkpoint", type=str, default=None, help='Path to model checkpoint')
-    parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
+
     args = parser.parse_args()
     
     model_params = {

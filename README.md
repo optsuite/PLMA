@@ -1,15 +1,16 @@
 # PLMA
-PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathscr{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\\{1,\dots,n\\}$. The QAP can be then formulated as 
-$$\min_{\pi\in\Pi_n}\quad f(\pi;\mathscr{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
+PLMA is a permutation learning framework for the quadratic assignment problem (QAP). A QAP instance $\mathcal{P}$ is specified by two $n\times n$ matrices $F=(F_{ij})$ and $D=(D_{kl})$, where $F_{ij}$ is the flow  between facilities $i$ and $j$ and $D_{kl}$ is the  distance between locations $k$ and $l$. Let  $\Pi_n$ represent the set of all permutations over $\\{1,\dots,n\\}$. The QAP can be then formulated as 
+$$\min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)}.$$
 
 ## Algorithm
-PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathscr{P})$ for each instance $\mathscr{P}$, through which the original optimization problem is transformed into a learning problem
+PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem
 
-$$\min_{\theta\in\mathbb{R}^d}\quad \mathscr{L}(\theta):= \mathbb{E}_{\mathscr{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathscr{P})}[f(\mathscr{T}(\pi);\mathscr{P})].$$
+$$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):= \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}[f(\mathcal{T}(\pi);\mathcal{P})],$$
+where $\mathcal{T}$ is a local imporovement map used to smooth the underlying probability ditribution.
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
 
-The probabilistic model utlized in PLMA is an energy-based model $\displaystyle p_{\theta}(\pi\mid\mathscr{P})=\frac{\exp(\Phi_{\theta}(\pi))}{Z_{\theta}}$ tailored for MCMC sampling. Specifically, the score function has an additive structure $\Phi_{\theta}(\pi) = \sum_{i=1}^n\phi_{i,\pi(i)}(\theta,\mathscr{P})$, where $\phi(\theta,\mathscr{P})=(\phi_{i,j}(\theta,\mathscr{P}))\in\mathbb{R}^{n\times n}$ is the heatmap output by the neural network. This structure enables $O(1)$-time evaluation of 2-swap proposals within a Metropolis-Hastings sampler. 
+The probabilistic model utlized in PLMA is an energy-based model $\displaystyle p_{\theta}(\pi\mid\mathcal{P})=\frac{\exp(\Phi_{\theta}(\pi))}{Z_{\theta}}$ tailored for MCMC sampling. Specifically, the score function has an additive structure $\Phi_{\theta}(\pi) = \sum_{i=1}^n\phi_{i,\pi(i)}(\theta,\mathcal{P})$, where $\phi(\theta,\mathcal{P})=(\phi_{i,j}(\theta,\mathcal{P}))\in\mathbb{R}^{n\times n}$ is the heatmap output by the neural network. This structure enables $O(1)$-time evaluation of 2-swap proposals within a Metropolis-Hastings sampler. 
 
 ## Installation
 The computational bottleneck of the PLMA framework, namely the parallelized execution of MCMC sampling and 2-swap local search, is addressed by high-performance implementations in CUDA C++. **Therefore, an NVIDIA GPU with a properly configured CUDA toolkit is a mandatory prerequisite for compilation and execution.**
@@ -37,6 +38,7 @@ pip install -r requirements.txt
 In our paper, we have evaluated PLMA on two families of synthetic QAP instances, and on the real-world QAPLIB and Taixxeyy benchmarks. Here we show how to run PLMA on these datasets and present partial results. 
 
 ### Dataset Preparation
+
 ### Running Scirpts
 
 ```
@@ -46,8 +48,16 @@ In our paper, we have evaluated PLMA on two families of synthetic QAP instances,
 ./scripts/run_tai.sh
 ```
 ### Results
-#### Geometrically Structured Dataset
+We compare our model against a wide spectrum of established and modern approaches, categorized as follows.
+- **Search-based solvers:** A highly-optimized heuristic solver, Robust Tabu Search (Ro-TS);
+- **Heuristic solvers:** Classic iterative algorithms commonly applied to graph matching, including IPFP, SM, and RRWM;
+- **Learning-based solvers:** Two representative deep learning approaches, SAWT and NGM.
 
+Results on two synthetic datasets are presented in the next two tables.  Some crucial conclusions can be drawn:
+1. The pretrained model (PLMA, $T=1$) offers an instant, high-quality solution that already outperforms other learning-based approaches;
+2. With brief fine-tuning (PLMA, $T=50$), the model rapidly converges to near-optimality, surpassing all other baselins than Ro-TS (5k);
+3. With 200 fine-tuning steps, PLMA consistently matches or surpasses the strong Ro-TS (5k) baseline in quality while being remarkably more efficient. 
+#### Geometrically Structured Dataset
 |  |  | $n=50$| |  | $n=100$ | |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Algorithm**| **Cost** | **Gap** | **Time** | **Cost** | **Gap** | **Time** |
@@ -85,7 +95,7 @@ In our paper, we have evaluated PLMA on two families of synthetic QAP instances,
 | **PLMA ($\boldsymbol{T=200}$)** | **521.83** | **-0.01\%** | 1m18s | **2193.13** | **0.00\%** | 14m1s |
 
 #### QAPLIB Benchmark
-The following table presents the average performance of different algorithms on the QAPLIB dataset, categorized by instance class. The metrics reported include the average optimality Gap and the computation Time (in seconds).
+The following table presents the average performance of different algorithms on the QAPLIB dataset, categorized by instance class. The metrics reported include the average optimality Gap and the computation Time (in seconds). It can be seen that PLMA achieves a near-zero average optimality gap on QAPLIB while being over 4 times faster than the strong Ro-TS baseline. 
 |  | **Ro-TS** | | **SAWT** | | **IPFP** | | **PLMA** | |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 |**Class** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** |
@@ -108,7 +118,7 @@ The following table presents the average performance of different algorithms on 
 | **Average** | 0.11\% | 9.68 | 37.82\% | 15.85 | 2.15\% | 2.73 | **0.10\%** | 2.29 |
 
 #### Taixxeyy instances
-The next table presents the average results of different algorithms on the Taixxeyy instance group, with all metrics being the mean values over 10 independent runs. For each class, the reported average and the [min, max] gaps are the averages of the per-instance statistics.
+The next table presents the average results of different algorithms on the Taixxeyy instance group, with all metrics being the mean values over 10 independent runs. For each class, the reported average and the [min, max] gaps are the averages of the per-instance statistics. The results show that PLMA delivers a low average gap of 2.38\% and a reliable worst-case performance with an average maximum gap of 3.69\%. This is in stark contrast to Ro-TS's highly erratic 81.01\% average gap and catastrophic failures with a maximum gap of 285.64\%. 
 | | |**Ro-TS** | | | **PLMA**| |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Class** | **[min, max]** | **mean** | **Time** | **[min, max]** | **mean** | **Time** |
