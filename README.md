@@ -6,6 +6,7 @@ $$\min_{\pi\in\Pi_n}\quad f(\pi;\mathcal{P}):=\sum_{i=1}^nF_{ij}D_{\pi(i),\pi(j)
 PLMA leverages a neural network to obtain parameterized probabilistic model $p_{\theta}(\pi\mid \mathcal{P})$ for each instance $\mathcal{P}$, through which the original optimization problem is transformed into a learning problem
 
 $$\min_{\theta\in\mathbb{R}^d}\quad \mathcal{L}(\theta):= \mathbb{E}_{\mathcal{P}\sim \Gamma}\mathbb{E}_{\pi\sim p_{\theta}(\cdot\mid\mathcal{P})}[f(\mathcal{T}(\pi);\mathcal{P})],$$
+
 where $\mathcal{T}$ is a local imporovement map used to smooth the underlying probability ditribution.
 
 The learning process consists of two stages, where the model is first pre-trained on diverse instances to learn transferable structure prior and then fine-tuned on target instances for specialized efficacy. The finetuning procedure employs a unique warm-start mechanism inherit in MCMC sampling that reuses previous high-quality solutions to initialize customized short and locally-interacted Markov chains, thereby focusing the adaptation on promising regions. 
