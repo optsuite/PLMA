@@ -37,9 +37,9 @@ def driver(dataset, output_dir, repetitions=10, model_params=None, checkpoint=No
     output_path_stats = os.path.join(output_dir, 'stats_results.csv')
 
     if dataset == "qaplib":
-        data_loader = load_qaplib(directory="../data/QAPLIB_opt")
+        data_loader = load_qaplib(directory="./data/qaplib")
     elif dataset == "tai":
-        data_loader = load_tai(data_root="../data/tai_data")
+        data_loader = load_tai(data_root="./data/tai")
 
     for problem_name, (n, opt, A, B) in data_loader:
         print(f"Processing Instance: {problem_name} (n={n}, opt={opt})")

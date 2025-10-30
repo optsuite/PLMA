@@ -1,0 +1,36 @@
+# Generator parameters
+dataset_type: "uniform"
+problem_size: 20
+
+# model parameters
+init_dim: 16
+embed_dim: 128
+num_heads: 8
+num_gcn_layers: 1
+num_att_layers: 1
+num_iterations: 1
+temperature: 1.0
+clipping_value: 0.5
+autoregressive: false
+
+# optimizer_params
+lr: 1e-4
+milestones: [275]
+gamma: 0.1
+
+# training parameters
+epochs: 300
+train_episodes: 100_000
+batch_size: 64
+model_save_interval: 50
+
+# plam parameters
+num_samples: 400
+chain_length: 20
+local_search_iter: 1
+num_actions: 20
+entropy_weight: 0.0
+
+# other settings
+seed: 0
+exp_name: "uniform20"

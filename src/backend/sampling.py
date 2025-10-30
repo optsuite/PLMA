@@ -17,28 +17,16 @@ def run_mcmc_and_improve(D_batch, F_batch, start_states, heatmap, backend, num_c
     local_search_iter = kwargs.get("local_search_iter", 20)
     num_actions = kwargs.get("num_actions", 20)
 
+    # --- MCMC Sampling ---
     # Expand start states for parallel chains: [B, K, n] -> [B,K,M,n] -> [B, K*M, n]
     start_states = start_states.unsqueeze(2).repeat(1, 1, num_chains, 1).view(num_instances, num_total_samples_per_instance, n)
-    
-    # --- MCMC Sampling ---
     terminal_states = backend.mcmc_step(start_states, torch.exp(heatmap.detach()), chain_length) # [B, K*M, n]
 
     # --- Local Search ---
     improved_states, costs = local_search(terminal_states, D_batch, F_batch, backend, local_search_iter, num_actions)
     changed = (terminal_states != improved_states).any(dim=2)
     ratio = changed.float().mean()
-    improved_states = improved_states.to(torch.int64) # [B, K*M, n]
-
-    # --- Update Start States ---
-    costs_matrix = costs.view(num_instances, num_starts, num_chains)
-
-    best_cost_over_chains, best_chain_indices = costs_matrix.min(dim=2) # [B, K]
-    improved_states_reshaped = improved_states.view(num_instances, num_starts, num_chains, n)
-
-    updated_start_states = improved_states_reshaped.take_along_dim(best_chain_indices[..., None, None], dim=2).squeeze(2)
-
-    epoch_best_costs, epoch_best_sol_idx = best_cost_over_chains.min(dim=1) # [B]
-    epoch_best_solutions = updated_start_states[torch.arange(num_instances), epoch_best_sol_idx]
+    improved_states = improved_states.to(torch.int64).view(num_instances, num_starts, num_chains, n) # [B, K*M, n] -> [B, K, M, n]
 
     # --- Compute Loss ---
     component_scores = torch.take_along_dim(heatmap.unsqueeze(1), terminal_states.to(torch.int64).unsqueeze(-1), dim=3).squeeze(-1) # [B, K*M, n]
@@ -50,8 +38,16 @@ def run_mcmc_and_improve(D_batch, F_batch, start_states, heatmap, backend, num_c
     entropy = - torch.sum(heatmap * torch.exp(heatmap), dim=(1,2)).mean() 
     loss = rl_loss - entropy * kwargs["entropy_weight"]
 
-    return updated_start_states, epoch_best_solutions, epoch_best_costs, loss, entropy, ratio
+    # --- Update Start States ---
+    costs_matrix = costs.view(num_instances, num_starts, num_chains)
+    best_cost_over_chains, best_chain_indices = costs_matrix.min(dim=2) # [B, K]
 
+    updated_start_states = improved_states.take_along_dim(best_chain_indices[..., None, None], dim=2).squeeze(2)
+
+    epoch_best_costs, epoch_best_sol_idx = best_cost_over_chains.min(dim=1) # [B]
+    epoch_best_solutions = updated_start_states[torch.arange(num_instances), epoch_best_sol_idx]
+
+    return updated_start_states, epoch_best_solutions, epoch_best_costs, loss, entropy, ratio
 
 
 def sequential_sampling(heatmap, num_samples, D_batch, F_batch):

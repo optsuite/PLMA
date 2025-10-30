@@ -73,11 +73,11 @@ if __name__ == "__main__":
     n = args.n
 
     if args.dataset == 'uniform':
-        D_root = f"../data/uniform/uniform_{n}_D.npy"
-        F_root = f"../data/uniform/uniform_{n}_F.npy"
+        D_root = f"./data/uniform/uniform_{n}_D.npy"
+        F_root = f"./data/uniform/uniform_{n}_F.npy"
     elif args.dataset == 'sawt':
-        D_root = f"../data/sawt/sawt_{n}_D.npy"
-        F_root = f"../data/sawt/sawt_{n}_F.npy"
+        D_root = f"./data/sawt/sawt_{n}_D.npy"
+        F_root = f"./data/sawt/sawt_{n}_F.npy"
 
     F, D = load_synthetic(F_root, D_root)
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     config["num_starts"] = args.num_starts if args.num_starts is not None else config["num_starts"]
     config["num_chains"] = args.num_chains if args.num_chains is not None else config["num_chains"]
     
-    rots_costs = pd.read_csv(f'../results/{args.dataset}/{args.dataset}{n}_rots(5k)_all_results.csv', usecols=['cost']).to_numpy().flatten()
+    rots_costs = pd.read_csv(f'./data/rots_results/{args.dataset}/{args.dataset}{n}_rots(5k)_all_results.csv', usecols=['cost']).to_numpy().flatten()
     rots_costs = torch.tensor(rots_costs, device="cuda")
 
     seed_everything(args.seed)

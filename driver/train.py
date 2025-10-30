@@ -1,10 +1,10 @@
 import os
 import sys
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(current_dir)
 sys.path.append(project_dir)
 import pytz
+import yaml
 import argparse
 import pprint as pp
 from datetime import datetime
@@ -40,18 +40,14 @@ def args2dict(args):
         "epochs": args.epochs,
         "train_episodes": args.train_episodes,
         "batch_size": args.batch_size,
-        "validation_interval": args.validation_interval,
         "model_save_interval": args.model_save_interval,
-        "checkpoint": args.checkpoint,
     }
 
-    n = args.problem_size
     plma_configs = {
-        "learning_rate": args.lr,
         "num_samples": args.num_samples,
-        "chain_length": n,
-        "local_search_iter": 1,
-        "num_actions": n,
+        "chain_length": args.chain_length,
+        "local_search_iter": args.local_search_iter,
+        "num_actions": args.num_actions,
         "entropy_weight": args.entropy_weight,
     }
     return generator_params, model_params, trainer_params, optimizer_params, plma_configs
@@ -85,18 +81,29 @@ if __name__ == "__main__":
     parser.add_argument("--train_episodes", type=int, default=100_000)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--model_save_interval", type=int, default=50)
-    parser.add_argument("--validation_interval", type=int, default=50)
-    parser.add_argument("--checkpoint", type=str, default=None)
 
     # plma training configs
-    parser.add_argument("--num_samples", type=int, default=20)
+    parser.add_argument("--num_samples", type=int, default=400)
+    parser.add_argument("--chain_length", type=int, default=None)
+    parser.add_argument("--local_search_iter", type=int, default=1)
+    parser.add_argument("--num_actions", type=int, default=None)
     parser.add_argument("--entropy_weight", type=float, default=0)
 
-    # other settings
+    # misc configs
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--exp_name", type=str, default="uniform50")
-
+    parser.add_argument("--config", default=None, type=str, help="Path to a config file to override default args.")
     args = parser.parse_args()
+    
+    if args.config is not None:
+        with open("configs/" + args.config, "r") as f:
+            config_args = yaml.safe_load(f)
+        for k, v in config_args.items():
+            assert hasattr(args, k), f'Unknown config key: {k}'
+            setattr(args, k, v)
+    args.num_actions = args.problem_size if args.num_actions is None else args.num_actions
+    args.chain_length = args.problem_size if args.chain_length is None else args.chain_length
+
 
     # Set log path
     process_start_time = datetime.now(pytz.timezone("Asia/Shanghai"))
@@ -128,10 +135,6 @@ if __name__ == "__main__":
         )
 
     trainer = Trainer(args, generator_params, model_params, trainer_params, optimizer_params, plma_configs)
-    print(">> Start training...")
-    trainer.run()
-    print(">> Training finished!")
-
     print(">> Start training...")
     trainer.run()
     print(">> Training finished!")

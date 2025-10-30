@@ -11,8 +11,6 @@ from src.backend.post_process import local_search
 from src.backend.sampling import sequential_sampling
 from src.models.model import QAPNet
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-data_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir, "data"))
 
 def setup_logger(log_path):
     """Setup logger with console and file handlers."""

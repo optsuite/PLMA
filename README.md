@@ -32,9 +32,13 @@ conda create -n plma python=3.10
 conda activate plma
 pip install -r requirements.txt
 ```
-
 ## Training
+Specify all training configurations in the YAML files found within the `configs` directory. To train a model, pass the path to its corresponding configuration file.
 
+For instance, to train on the uniformly random dataset ($n=100$), execute:
+```
+python train.py --config uniform100.yaml
+```
 ## Evaluation
 In our paper, we have evaluated PLMA on two families of synthetic QAP instances, and on the real-world QAPLIB and Taixxeyy benchmarks. Here we show how to run PLMA on these datasets and present partial results. 
 

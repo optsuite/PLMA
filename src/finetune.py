@@ -75,7 +75,11 @@ def mcmc_finetune(
     for iter in range(config["num_finetune_steps"]):
         heatmap = net(D_batch, F_batch)
         states, iter_best_sols, iter_best_costs, loss, entropy, ratio = run_mcmc_and_improve(D_batch, F_batch, states, heatmap, backend, **config)
-  
+
+        optimizer.zero_grad()    
+        loss.backward()
+        optimizer.step()
+
         improvement_mask = iter_best_costs < global_best_costs
         global_best_solutions[improvement_mask] = iter_best_sols[improvement_mask]
         global_best_costs[improvement_mask] = iter_best_costs[improvement_mask]
@@ -101,10 +105,6 @@ def mcmc_finetune(
         global_best_costs_list.append(global_best_costs.mean().item())
         iter_best_costs_list.append(iter_best_costs.mean().item())
         global_best_gap_list.append(gap.mean().item())
-
-        optimizer.zero_grad()    
-        loss.backward()
-        optimizer.step()
 
     run_time = time.time() - start_time
     
