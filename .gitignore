@@ -1,5 +1,6 @@
 # macOS
 .DS_Store
+._*
 .AppleDouble
 .LSOverride
 Thumbs.db
@@ -38,3 +39,7 @@ eggs/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Experiment outputs
+results/
+logs/

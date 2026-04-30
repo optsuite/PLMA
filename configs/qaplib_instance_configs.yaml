@@ -1,0 +1,104 @@
+# Instance-specific configurations for QAPLIB evaluation.
+#
+# Parameters:
+#   clipping_value: Network clipping parameter (C)
+#   num_starts:     Number of independent starts (K)
+#   num_chains:     Number of MCMC chains per start (M)
+#   local_search_iter_factor:  local_search_iter = factor * n  (overrides default)
+#   num_actions_factor:        num_actions = factor * n         (overrides default)
+
+defaults:
+  clipping_value: 11.0
+  num_starts: 20
+  num_chains: 20
+
+instances:
+  # ---- chr class ----
+  chr15b:
+    clipping_value: 1.0
+  chr20a:
+    clipping_value: 1.0
+    num_starts: 80
+    num_chains: 80
+  chr20b:
+    clipping_value: 1.0
+    num_starts: 80
+    num_chains: 80
+  chr22b:
+    clipping_value: 1.0
+    num_starts: 80
+    num_chains: 80
+
+  # ---- kra class ----
+  kra30a:
+    clipping_value: 1.0
+
+  # ---- lipa class ----
+  lipa60a:
+    clipping_value: 1.0
+    local_search_iter_factor: 2
+  lipa70a:
+    local_search_iter_factor: 2
+
+  # ---- rou class ----
+  rou20:
+    clipping_value: 1.0
+    num_starts: 80
+    num_chains: 80
+    local_search_iter_factor: 2
+
+  # ---- sko class ----
+  sko49:
+    num_starts: 80
+    num_chains: 80
+    local_search_iter_factor: 2
+    num_actions_factor: 1
+  sko56:
+    num_starts: 40
+    num_chains: 20
+    local_search_iter_factor: 2
+    num_actions_factor: 1
+
+  # ---- ste class ----
+  ste36a:
+    num_starts: 40
+
+  # ---- tai class ----
+  tai25a:
+    clipping_value: 0.5
+    num_starts: 80
+    num_chains: 80
+    local_search_iter_factor: 5
+    num_actions_factor: 1
+  tai30a:
+    clipping_value: 0.5
+    num_starts: 80
+    num_chains: 80
+    local_search_iter_factor: 5
+  tai35a:
+    clipping_value: 1.0
+    num_starts: 80
+    num_chains: 80
+    local_search_iter_factor: 5
+    num_actions_factor: 1
+  tai40a:
+    clipping_value: 1.0
+  tai50a:
+    clipping_value: 5.0
+    num_starts: 40
+    num_chains: 20
+  tai60a:
+    clipping_value: 5.0
+    num_starts: 40
+    num_chains: 20
+
+  # ---- tho class ----
+  tho40:
+    clipping_value: 1.0
+    num_starts: 80
+    num_chains: 80
+    local_search_iter_factor: 2
+    num_actions_factor: 3
+  tho150:
+    clipping_value: 11.0
+    local_search_iter_factor: 2

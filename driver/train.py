@@ -3,7 +3,7 @@ import sys
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(current_dir)
 sys.path.append(project_dir)
-import pytz
+
 import yaml
 import argparse
 import pprint as pp
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
 
     # Set log path
-    process_start_time = datetime.now(pytz.timezone("Asia/Shanghai"))
+    process_start_time = datetime.now()
     log_dir = os.path.join(project_dir, "logs")
     args.log_path = os.path.join(log_dir, args.exp_name, process_start_time.strftime("%Y-%m-%d_%H_%M"))
     os.makedirs(args.log_path, exist_ok=True)
