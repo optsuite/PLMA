@@ -1,10 +1,14 @@
 # PLMA
 
-This is the code repository for PLMA (Permutation Learning with MCMC-based Adaptation), a learning framework for solving the Quadratic Assignment Problem (QAP). 
+This is the code repository for PLMA (Permutation Learning with MCMC-based Adaptation), a learning framework for solving the Quadratic Assignment Problem (QAP), which seeks an optimal permutation $\pi \in \Pi_n$ minimizing the total assignment cost:
+
+$$\min_{\pi \in \Pi_n} \sum_{i=1}^{n}\sum_{j=1}^{n} F_{ij}\, D_{\pi(i)\pi(j)}.$$
+
+Here $F = (F_{ij})_{n\times n}$ denotes the flow matrix, $D = (D_{kl})_{n\times n}$ denotes the distance matrix, and $\Pi_n$ denotes the set of all permutations over $[n]$.
 
 PLMA features:
 - An efficient warm-started MCMC finetuning procedure
-- An additive energy-based model (EBM) enabling O(1)-time 2-swap Metropolis-Hastings sampling
+- An additive energy-based model (EBM) enabling $O(1)$-time 2-swap Metropolis-Hastings sampling
 - A scalable cross-graph attention mechanism for modeling QAP interactions
 
 ## Setup
@@ -96,26 +100,26 @@ Results on two synthetic datasets are presented in the next two tables. Some cru
 
 #### QAPLIB Benchmark
 The following table presents the average performance of different algorithms on the QAPLIB dataset, categorized by instance class. The metrics reported include the average optimality Gap and the computation Time (in seconds). PLMA achieves the best overall performance, attaining the lowest average optimality gap of 0.06% while also requiring the least average computation time among all heuristic baselines.
-|  | **Ro-TS** | | **BMA** | | **SAWT** | | **IPFP** | | **PLMA** | |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-|**Class** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** |
-| bur (26) | **0.00%** | 0.12 | **0.00%** | 0.03 | 3.95% | 14.67 | 0.05% | 0.33 | **0.00%** | 0.08 |
-| chr (12-25) | 0.48% | 0.16 | 0.18% | 0.14 | 147.54% | 14.18 | 14.90% | 0.26 | **0.00%** | 0.31 |
-| els (19) | **0.00%** | 0.02 | **0.00%** | 0.02 | 47.37% | 14.24 | 10.18% | 0.36 | **0.00%** | 0.09 |
-| esc (16-128) | **0.00%** | 0.62 | **0.00%** | 0.01 | 43.29% | 15.07 | 0.39% | 0.63 | **0.00%** | 0.07 |
-| had (12-20) | **0.00%** | 0.00 | **0.00%** | 0.00 | 5.17% | 14.23 | 0.08% | 0.39 | **0.00%** | 0.05 |
-| kra (30-32) | **0.00%** | 0.24 | **0.00%** | 0.07 | 32.92% | 14.77 | 0.65% | 0.62 | **0.00%** | 0.31 |
-| lipa (20-90) | 0.03% | 3.28 | **0.02%** | 2.35 | 1.40% | 17.32 | 1.07% | 4.93 | 0.08% | 1.57 |
-| nug (12-30) | **0.00%** | 0.02 | **0.00%** | 0.02 | 19.25% | 14.39 | 0.05% | 0.38 | **0.00%** | 0.17 |
-| rou (12-20) | **0.00%** | 0.04 | **0.00%** | 0.04 | 15.09% | 14.25 | 0.77% | 0.33 | **0.00%** | 0.08 |
-| scr (12-20) | **0.00%** | 0.01 | **0.00%** | 0.01 | 33.92% | 14.22 | 1.24% | 0.28 | **0.00%** | 0.08 |
-| sko (42-100) | 0.05% | 29.22 | **0.03%** | 21.00 | 16.17% | 19.06 | 0.30% | 8.40 | **0.03%** | 7.01 |
-| ste (36) | 0.01% | 0.53 | **0.00%** | 0.30 | 107.95% | 14.95 | 1.81% | 0.70 | **0.00%** | 0.55 |
-| tai (10-256) | 0.23% | 25.16 | 0.21% | 19.06 | 34.67% | 16.62 | 0.92% | 3.33 | **0.20%** | 4.73 |
-| tho (30-150) | **0.04%** | 38.74 | **0.04%** | 26.59 | 24.05% | 17.19 | 0.42% | 12.46 | **0.04%** | 6.42 |
-| wil (50-100) | **0.02%** | 26.06 | **0.02%** | 18.41 | 9.52% | 17.64 | 0.12% | 9.66 | **0.02%** | 6.82 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Average** | 0.11% | 9.68 | 0.07% | 7.06 | 37.82% | 15.85 | 2.15% | 2.73 | **0.06%** | 2.16 |
+|  | **Ro-TS** | | **SAWT** | | **IPFP** | | **PLMA** | |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+|**Class** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** | **Gap** | **Time** |
+| bur (26) | **0.00%** | 0.12 | 3.95% | 14.67 | 0.05% | 0.33 | **0.00%** | 0.08 |
+| chr (12-25) | 0.48% | 0.16 | 147.54% | 14.18 | 14.90% | 0.26 | **0.00%** | 0.31 |
+| els (19) | **0.00%** | 0.02 | 47.37% | 14.24 | 10.18% | 0.36 | **0.00%** | 0.09 |
+| esc (16-128) | **0.00%** | 0.62 | 43.29% | 15.07 | 0.39% | 0.63 | **0.00%** | 0.07 |
+| had (12-20) | **0.00%** | 0.00 | 5.17% | 14.23 | 0.08% | 0.39 | **0.00%** | 0.05 |
+| kra (30-32) | **0.00%** | 0.24 | 32.92% | 14.77 | 0.65% | 0.62 | **0.00%** | 0.31 |
+| lipa (20-90) | 0.03% | 3.28 | 1.40% | 17.32 | 1.07% | 4.93 | 0.08% | 1.57 |
+| nug (12-30) | **0.00%** | 0.02 | 19.25% | 14.39 | 0.05% | 0.38 | **0.00%** | 0.17 |
+| rou (12-20) | **0.00%** | 0.04 | 15.09% | 14.25 | 0.77% | 0.33 | **0.00%** | 0.08 |
+| scr (12-20) | **0.00%** | 0.01 | 33.92% | 14.22 | 1.24% | 0.28 | **0.00%** | 0.08 |
+| sko (42-100) | 0.05% | 29.22 | 16.17% | 19.06 | 0.30% | 8.40 | **0.03%** | 7.01 |
+| ste (36) | 0.01% | 0.53 | 107.95% | 14.95 | 1.81% | 0.70 | **0.00%** | 0.55 |
+| tai (10-256) | 0.23% | 25.16 | 34.67% | 16.62 | 0.92% | 3.33 | **0.20%** | 4.73 |
+| tho (30-150) | **0.04%** | 38.74 | 24.05% | 17.19 | 0.42% | 12.46 | **0.04%** | 6.42 |
+| wil (50-100) | **0.02%** | 26.06 | 9.52% | 17.64 | 0.12% | 9.66 | **0.02%** | 6.82 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Average** | 0.11% | 9.68 | 37.82% | 15.85 | 2.15% | 2.73 | **0.06%** | 2.16 |
 
 #### Taixxeyy Instances
 The next table presents the grouped results on Taixxeyy instances, with all metrics averaged over 10 independent runs. For each class, the reported mean and [min, max] gaps (%) are averages of per-instance statistics. PLMA delivers a low average gap of 2.56% and a reliable worst-case performance with an average maximum gap of 3.84%. This is in stark contrast to Ro-TS's highly erratic 81.01% average gap and catastrophic failures with a maximum gap of 285.64%.
@@ -129,3 +133,25 @@ The next table presents the grouped results on Taixxeyy instances, with all metr
 | tai175e | 67.86 | [9.11, 260.98] | 158.18 | **9.09** | [5.96, 12.24] | 14.43 |
 | --- | --- | --- | --- | --- | --- | --- |
 | **Average** | 81.01 | [4.82, 285.64] | 50.72 | **2.56** | [1.35, 3.84] | 4.92 |
+
+
+
+## Contact
+We hope that the package is useful for your application. If you have any questions related to the code or the paper, please feel free to email one of the following authors:
+- Yicheng Pan, `panyicheng@stu.pku.edu.cn`
+- Ruisong Zhou, `ruisongzhou@stu.pku.edu.cn`
+- Haijun Zou, `haijunzou10853@gmail.com`
+- Zaiwen Wen, `wenzw@pku.edu.cn`
+
+## Reference
+[Yicheng Pan, Ruisong Zhou, Haijun Zou, Tainyou Li & Zaiwen Wen.  "Learning to Solve the Quadratic Assignment Problem with Warm-Started MCMC Finetuning." arXiv preprint arXiv:2604.20109 (2026).](https://arxiv.org/abs/2604.20109)
+
+## Citation
+```bibtex
+@article{pan2026learning,
+      title={Learning to Solve the Quadratic Assignment Problem with Warm-Started MCMC Finetuning}, 
+      author={Yicheng Pan and Ruisong Zhou and Haijun Zou and Tianyou Li and Zaiwen Wen},
+      journal={arXiv preprint arXiv:2604.20109},
+      year={2026},
+}
+```
