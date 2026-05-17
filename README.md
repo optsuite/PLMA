@@ -4,7 +4,7 @@ This is the code repository for PLMA (Permutation Learning with MCMC-based Adapt
 
 $$\min_{\pi \in \Pi_n} \sum_{i=1}^{n}\sum_{j=1}^{n} F_{ij}\, D_{\pi(i)\pi(j)}.$$
 
-Here $F = (F_{ij})_{n\times n}$ denotes the flow matrix, $D = (D_{kl})_{n\times n}$ denotes the distance matrix, and $\Pi_n$ denotes the set of all permutations over $[n]$.
+Here $F \in \mathbb{R}^{n\times n}$ denotes the flow matrix with entries $F_{ij}$, $D \in \mathbb{R}^{n\times n}$ denotes the distance matrix with entries $D_{kl}$, and $\Pi_n$ denotes the set of all permutations over $[n]$.
 
 PLMA features:
 - An efficient warm-started MCMC finetuning procedure
